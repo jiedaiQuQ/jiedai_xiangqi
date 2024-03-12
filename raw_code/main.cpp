@@ -1,10 +1,10 @@
 #include<graphics.h>
 #include<bits/stdc++.h>
 using namespace std;
-#define BK_COLOR WHITE//èƒŒæ™¯è‰² 
-#define BOARD_COLOR EGERGB(222,195,142)//æ£‹ç›˜åº•è‰² 
-#define MENU_COLOR EGERGB(48,176,239)//èœå•é€‰é¡¹è‰² 
-#define MENU2_COLOR EGERGB(233,233,233)//é¢æ¿åº•è‰² 
+#define BK_COLOR WHITE//±³¾°É« 
+#define BOARD_COLOR EGERGB(222,195,142)//ÆåÅÌµ×É« 
+#define MENU_COLOR EGERGB(48,176,239)//²Ëµ¥Ñ¡ÏîÉ« 
+#define MENU2_COLOR EGERGB(233,233,233)//Ãæ°åµ×É« 
 const int SCREEN_W=1000;
 const int SCREEN_H=700;
 const int BOARD_X=50;
@@ -29,9 +29,9 @@ const int Ju=5;
 const int Pao=6;
 const int Bing=7;
 
-static char ChessName[2][8][3]={
-	{"  ","å°‡","å£«","è±¡","é¦¬","è»Š","ç‚®","å’"},
-	{"  ","å¸¥","ä»•","ç›¸","é¦¬","è»Š","ç‚®","å…µ"}
+static char ChessName[2][8][5]={
+	{"  ","Œ¢","Ê¿","Ïó","ñR","Ü‡","ÅÚ","×ä"},
+	{"  ","›","ÊË","Ïà","ñR","Ü‡","ÅÚ","±ø"}
 };
 
 const int IDShuai=0;
@@ -273,8 +273,8 @@ struct TranspositionTable{
 
 struct LineSituation{
 	static const int Capacity=3*3*3*3*3*3*3*3*3*3;
-	char juMoveCountH[16][Capacity];//æ¨ªç§»(9)
-	char juMoveCountW[16][Capacity];//ç«–ç§»(10)
+	char juMoveCountH[16][Capacity];//ºáÒÆ(9)
+	char juMoveCountW[16][Capacity];//ÊúÒÆ(10)
 	char paoMoveCountH[16][Capacity];
 	char paoMoveCountW[16][Capacity];
 	unsigned char juKillH[16][Capacity];
@@ -285,7 +285,7 @@ struct LineSituation{
 	unsigned char pao2KillW[16][Capacity];
 	int three[16];
 	int valueH[2][256],valueW[2][256];
-	int changeH[2][256],changeW[2][256];//!colorå˜æˆcolorçš„å¢é‡
+	int changeH[2][256],changeW[2][256];//!color±ä³ÉcolorµÄÔöÁ¿
 	void Init(){
 		if(three[0])return;
 		three[0]=1;
@@ -435,7 +435,7 @@ struct LineupTable{
 					(bingValue-1*bingK)*(bing[i]>=4)+
 					(bingValue-2*bingK)*(bing[i]>=5)
 				);
-				value[i]+=max(0,(small[i]-small[!i]-5)*(30-small[!i]));//æ¢å­æ¿€åŠ±
+				value[i]+=max(0,(small[i]-small[!i]-5)*(30-small[!i]));//»»×Ó¼¤Àø
 				if(ma[i]+ju[i]+pao[i]==1){
 					if(ma[i]==1)value[i]-=100;
 					if(ju[i]==1)value[i]-=300;
@@ -480,7 +480,7 @@ struct ChessBoard{
 			for(int j=3;j<=11;j++){
 				if(chess[HW(i,j)].type){
 					Ctrl::SetColor(chess[HW(i,j)].color==Red?Ctrl::RED:Ctrl::GREY);
-					static char str[8][3]={"  ","å°†","å£«","ç›¸","é©¬","è½¦","ç‚®","å…µ"};
+					static char str[8][5]={"  ","½«","Ê¿","Ïà","Âí","³µ","ÅÚ","±ø"};
 					printf("%s",str[chess[HW(i,j)].type]);
 					Ctrl::SetColor(Ctrl::GREY);
 				}
@@ -497,7 +497,7 @@ struct ChessBoard{
 	bool NullMoveSafe(){
 		return typeCount[color][Ma]+typeCount[color][Ju]+typeCount[color][Pao]>=3;
 	}
-	bool CheckMove(int begin,int end){//åˆ¤æ–­ç§»åŠ¨æ˜¯å¦åˆæ³•
+	bool CheckMove(int begin,int end){//ÅĞ¶ÏÒÆ¶¯ÊÇ·ñºÏ·¨
 		if(begin==end)return false;
 		if(!chess[begin].IsLegal()||!chess[end].IsLegal())return false;
 		if(chess[end].type&&chess[begin].color==chess[end].color)return false;
@@ -790,7 +790,7 @@ struct ChessBoard{
 		}
 		return moves;
 	}
-	bool CheckKill(bool nowColor){//åˆ¤æ–­æ˜¯å¦è¢«å°†å†›
+	bool CheckKill(bool nowColor){//ÅĞ¶ÏÊÇ·ñ±»½«¾ü
 		int begin=position[nowColor][IDShuai],end;
 		int h=H(begin),w=W(begin);
 		if(chess[end=HW(h,H(lineSituation.paoKillH[w][lineH[h]]))].type==Pao)
@@ -823,7 +823,7 @@ struct ChessBoard{
 		if(chess[begin+1].type==Bing)return true;
 		return false;
 	}
-	bool CheckProtect(int begin){//åˆ¤æ–­æ˜¯å¦è¢«ä¿æŠ¤
+	bool CheckProtect(int begin){//ÅĞ¶ÏÊÇ·ñ±»±£»¤
 		int end;
 		int nowColor=chess[begin].color;
 		int h=H(begin),w=W(begin);
@@ -1013,7 +1013,7 @@ struct ChessBoard{
 		transpositionTable.Init();
 	}
 	int Evaluate1(int debug=0){
-		static int controlValue[8][256]={//æ§åˆ¶åˆ†
+		static int controlValue[8][256]={//¿ØÖÆ·Ö
 			{
 				0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 				0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -1031,7 +1031,7 @@ struct ChessBoard{
 				0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 				0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 				0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-			},{//å¸…
+			},{//Ë§
 				0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 				0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 				0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -1048,7 +1048,7 @@ struct ChessBoard{
 				0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 				0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 				0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-			},{//å£«
+			},{//Ê¿
 				0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 				0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 				0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -1065,7 +1065,7 @@ struct ChessBoard{
 				0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 				0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 				0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-			},{//ç›¸
+			},{//Ïà
 				0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 				0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 				0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -1082,7 +1082,7 @@ struct ChessBoard{
 				0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 				0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 				0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-			},{//é©¬
+			},{//Âí
 				0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 				0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 				0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -1099,7 +1099,7 @@ struct ChessBoard{
 				0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 				0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 				0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-			},{//è½¦
+			},{//³µ
 				0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 				0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 				0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -1116,7 +1116,7 @@ struct ChessBoard{
 				0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 				0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 				0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-			},{//ç‚®
+			},{//ÅÚ
 				0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 				0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 				0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -1133,7 +1133,7 @@ struct ChessBoard{
 				0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 				0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 				0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-			},{//å…µ
+			},{//±ø
 				0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 				0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 				0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -1152,19 +1152,19 @@ struct ChessBoard{
 				0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 			}
 		};
-		static double controlFactor[8]={0,2,2,2,5,3,3,3};//æ§åˆ¶ç³»æ•°
-//		static int basicValue[8]={0,10000,250,250,300,500,300,80};//å­åŠ›ä»·å€¼
-//		static int basicValue[8]={0,10000,175,200,425,1000,475,100};//å­åŠ›ä»·å€¼
-//		static int mobilityValue[8]={0,0,1,1,12,6,6,15};//æœºåŠ¨æ€§
-		static int mobilityValue[8]={0,0,0,0,6,3,3,8};//æœºåŠ¨æ€§
+		static double controlFactor[8]={0,2,2,2,5,3,3,3};//¿ØÖÆÏµÊı
+//		static int basicValue[8]={0,10000,250,250,300,500,300,80};//×ÓÁ¦¼ÛÖµ
+//		static int basicValue[8]={0,10000,175,200,425,1000,475,100};//×ÓÁ¦¼ÛÖµ
+//		static int mobilityValue[8]={0,0,1,1,12,6,6,15};//»ú¶¯ĞÔ
+		static int mobilityValue[8]={0,0,0,0,6,3,3,8};//»ú¶¯ĞÔ
 		
-		static int killValue[8]={0,50,10,15,20,20,20,10};//å‡»æ€åˆ†
-		static int protectValue[8]={0,0,2,4,4,4,4,2};//ä¿æŠ¤åˆ†
-		static int killValue2[8]={0,25,5,8,10,10,10,5};//æ½œåœ¨å‡»æ€åˆ†
-		static int protectValue2[8]={0,0,1,2,2,2,2,1};//æ½œåœ¨ä¿æŠ¤åˆ†
+		static int killValue[8]={0,50,10,15,20,20,20,10};//»÷É±·Ö
+		static int protectValue[8]={0,0,2,4,4,4,4,2};//±£»¤·Ö
+		static int killValue2[8]={0,25,5,8,10,10,10,5};//Ç±ÔÚ»÷É±·Ö
+		static int protectValue2[8]={0,0,1,2,2,2,2,1};//Ç±ÔÚ±£»¤·Ö
 		
-		static int directPaoValue[10]={0,0,30,120,135,135,135,120,120,120};//å½“å¤´ç‚®
-		static int doublePaoValue[10]={0,0,0,50,40,30,20,20,20,20};//éš”å±±ç‚®
+		static int directPaoValue[10]={0,0,30,120,135,135,135,120,120,120};//µ±Í·ÅÚ
+		static int doublePaoValue[10]={0,0,0,50,40,30,20,20,20,20};//¸ôÉ½ÅÚ
 		static int firstValue=25;
 		
 		int totalValue[2]={0};
@@ -1664,7 +1664,7 @@ long long nodeCount,leafCount,hitCount,quiesCount,evaluateCount;
 
 int Quies(int alpha,int beta,int distance){
 	quiesCount++;
-	if(-WinValue+distance>=beta)return beta;//æ— å®³è£å‰ª
+	if(-WinValue+distance>=beta)return beta;//ÎŞº¦²Ã¼ô
 	int value=board.Evaluate1();
 	if(value>=beta){
 		return beta;
@@ -1709,7 +1709,7 @@ int Evaluate(int distance){
 
 int AlphaBetaNonRoot(int alpha,int beta,int depth,int distance,bool canNullMove,deque<Move>&moveTrace){
 	nodeCount++;
-	if(-WinValue+distance>=beta)return beta;//æ— å®³è£å‰ª
+	if(-WinValue+distance>=beta)return beta;//ÎŞº¦²Ã¼ô
 	Move bestMove={0};
 	Move imagineMove={0};
 	TTItem *item=transpositionTable.Query(board.key);
@@ -1737,20 +1737,20 @@ int AlphaBetaNonRoot(int alpha,int beta,int depth,int distance,bool canNullMove,
 	if(depth==0){
 		leafCount++;
 		int value=Evaluate(distance);
-		transpositionTable.Insert(board.key,value,value,depth,distance,bestMove);//æ›´æ–°ç½®æ¢è¡¨
+		transpositionTable.Insert(board.key,value,value,depth,distance,bestMove);//¸üĞÂÖÃ»»±í
 		return value;
 	}
-	if(canNullMove&&depth>=3&&!board.CheckKill(board.color)){//ç©ºç€
+	if(canNullMove&&depth>=3&&!board.CheckKill(board.color)){//¿Õ×Å
 		board.ExecuteNullMove();
 		deque<Move>trace;
 		int value=-AlphaBetaNonRoot(-beta,-beta+1,depth-1-2,distance+1,false,trace);
 		board.RescindNullMove();
 		if(value>=beta){
 			if(board.NullMoveSafe())return beta;
-			if(AlphaBetaNonRoot(beta-1,beta,depth-2,distance,false,trace)>=beta)return beta;//ç©ºç€æ£€éªŒ
+			if(AlphaBetaNonRoot(beta-1,beta,depth-2,distance,false,trace)>=beta)return beta;//¿Õ×Å¼ìÑé
 		}
 	}
-	if(depth>=3&&imagineMove.begin==0&&beta-alpha>1){//å†…éƒ¨è¿­ä»£åŠ æ·±
+	if(depth>=3&&imagineMove.begin==0&&beta-alpha>1){//ÄÚ²¿µü´ú¼ÓÉî
 		deque<Move>trace;
 		int value=AlphaBetaNonRoot(alpha,beta,depth/2,distance,false,trace);
 		if(value<=alpha){
@@ -1782,7 +1782,7 @@ int AlphaBetaNonRoot(int alpha,int beta,int depth,int distance,bool canNullMove,
 			for(Move &move:eatMoves)mvvlva[move.begin][move.end]=board.MVVLVA(move);
 			sort(eatMoves.begin(),eatMoves.end(),[&](Move &a,Move &b){
 				return mvvlva[a.begin][a.end]>mvvlva[b.begin][b.end];
-			});//æ ¹æ®MVV(LVA)å€¼æ’åº
+			});//¸ù¾İMVV(LVA)ÖµÅÅĞò
 			while(eatMoves.size()&&mvvlva[eatMoves.back().begin][eatMoves.back().end]<=0)eatMoves.pop_back();
 		}
 		if(state==2){
@@ -1830,7 +1830,7 @@ int AlphaBetaNonRoot(int alpha,int beta,int depth,int distance,bool canNullMove,
 			}
 			sort(moves.begin(),moves.end(),[&](Move &a,Move &b){
 				return historyTable.value[a.begin][a.end]>historyTable.value[b.begin][b.end];
-			});//æ ¹æ®å†å²è¡¨æ’åº
+			});//¸ù¾İÀúÊ·±íÅÅĞò
 		}
 		if(state==6){
 			while(index<moves.size())return moves[index++];
@@ -1872,10 +1872,10 @@ int AlphaBetaNonRoot(int alpha,int beta,int depth,int distance,bool canNullMove,
 				board.RescindMove(move);
 			}
 			if(value>=beta){
-				historyTable.Update(move,depth);//æ›´æ–°å†å²è¡¨
-				killerTable.Insert(move,distance);//æ›´æ–°æ€æ‰‹è¡¨
+				historyTable.Update(move,depth);//¸üĞÂÀúÊ·±í
+				killerTable.Insert(move,distance);//¸üĞÂÉ±ÊÖ±í
 				if(value!=BanValue)
-					transpositionTable.Insert(board.key,value,Infinite,depth,distance,move);//æ›´æ–°ç½®æ¢è¡¨
+					transpositionTable.Insert(board.key,value,Infinite,depth,distance,move);//¸üĞÂÖÃ»»±í
 				return beta;
 			}
 			if(value>alpha){
@@ -1889,10 +1889,10 @@ int AlphaBetaNonRoot(int alpha,int beta,int depth,int distance,bool canNullMove,
 	if(!canMove){
 		return -WinValue+distance;
 	}
-	historyTable.Update(bestMove,depth);//æ›´æ–°å†å²è¡¨
+	historyTable.Update(bestMove,depth);//¸üĞÂÀúÊ·±í
 	if(alpha!=BanValue){
-		if(isPV)transpositionTable.Insert(board.key,alpha,alpha,depth,distance,bestMove);//æ›´æ–°ç½®æ¢è¡¨
-		else transpositionTable.Insert(board.key,-Infinite,alpha,depth,distance,bestMove);//æ›´æ–°ç½®æ¢è¡¨
+		if(isPV)transpositionTable.Insert(board.key,alpha,alpha,depth,distance,bestMove);//¸üĞÂÖÃ»»±í
+		else transpositionTable.Insert(board.key,-Infinite,alpha,depth,distance,bestMove);//¸üĞÂÖÃ»»±í
 	}
 	moveTrace.push_front(bestMove);
 	return alpha;
@@ -1910,7 +1910,7 @@ int AlphaBetaRoot(int alpha,int beta,int depth,deque<Move>&moveTrace,vector<Move
 			if(board.MVVLVA(a)>0||board.MVVLVA(b)>0)
 				return board.MVVLVA(a)>board.MVVLVA(b);
 			return historyTable.value[a.begin][a.end]>historyTable.value[b.begin][b.end];
-		});//æ ¹æ®å†å²è¡¨æ’åº
+		});//¸ù¾İÀúÊ·±íÅÅĞò
 	}
 	static int moveValue[256][256];
 	for(int i=0;i<moves.size();i++){
@@ -1956,16 +1956,16 @@ int AlphaBetaRoot(int alpha,int beta,int depth,deque<Move>&moveTrace,vector<Move
 				moveValue[move.begin][move.end]=value;
 			}
 			if(value>=beta){
-				historyTable.Update(bestMove,depth);//æ›´æ–°å†å²è¡¨
+				historyTable.Update(bestMove,depth);//¸üĞÂÀúÊ·±í
 				if(value!=BanValue)
-					transpositionTable.Insert(board.key,value,Infinite,depth,0,move);//æ›´æ–°ç½®æ¢è¡¨
+					transpositionTable.Insert(board.key,value,Infinite,depth,0,move);//¸üĞÂÖÃ»»±í
 				sort(moves.begin(),moves.end(),[&](Move &a,Move &b){
 					if(moveValue[a.begin][a.end]!=moveValue[b.begin][b.end])
 						return moveValue[a.begin][a.end]>moveValue[b.begin][b.end];
 					if(board.MVVLVA(a)>0||board.MVVLVA(b)>0)
 						return board.MVVLVA(a)>board.MVVLVA(b);
 					return historyTable.value[a.begin][a.end]>historyTable.value[b.begin][b.end];
-				});//æ›´æ–°æ ¹èŠ‚ç‚¹ç€æ³•é¡ºåº
+				});//¸üĞÂ¸ù½Úµã×Å·¨Ë³Ğò
 				return beta;
 			}
 			if(value>alpha){
@@ -1980,24 +1980,24 @@ int AlphaBetaRoot(int alpha,int beta,int depth,deque<Move>&moveTrace,vector<Move
 	if(!canMove){
 		return -WinValue;
 	}
-	historyTable.Update(bestMove,depth);//æ›´æ–°å†å²è¡¨
+	historyTable.Update(bestMove,depth);//¸üĞÂÀúÊ·±í
 	if(alpha!=BanValue){
-		if(isPV)transpositionTable.Insert(board.key,alpha,alpha,depth,0,bestMove);//æ›´æ–°ç½®æ¢è¡¨
-		else transpositionTable.Insert(board.key,-Infinite,alpha,depth,0,bestMove);//æ›´æ–°ç½®æ¢è¡¨
+		if(isPV)transpositionTable.Insert(board.key,alpha,alpha,depth,0,bestMove);//¸üĞÂÖÃ»»±í
+		else transpositionTable.Insert(board.key,-Infinite,alpha,depth,0,bestMove);//¸üĞÂÖÃ»»±í
 	}
 	moveTrace.push_front(bestMove);
 	sort(moves.begin(),moves.end(),[&](Move &a,Move &b){
 		if(moveValue[a.begin][a.end]!=moveValue[b.begin][b.end])
 			return moveValue[a.begin][a.end]>moveValue[b.begin][b.end];
 		return historyTable.value[a.begin][a.end]>historyTable.value[b.begin][b.end];
-	});//æ›´æ–°æ ¹èŠ‚ç‚¹ç€æ³•é¡ºåº
+	});//¸üĞÂ¸ù½Úµã×Å·¨Ë³Ğò
 	return alpha;
 }
 
 Move CalculationComputerMove(int level,int step){
 	board=chessBoard;
-	historyTable.Attenuate();//æ¯æ¬¡æœç´¢å‰è¡°å‡å†å²è¡¨
-	killerTable.Init();//æ¯æ¬¡æœç´¢å‰æ¸…ç©ºæ€æ‰‹è¡¨
+	historyTable.Attenuate();//Ã¿´ÎËÑË÷Ç°Ë¥¼õÀúÊ·±í
+	killerTable.Init();//Ã¿´ÎËÑË÷Ç°Çå¿ÕÉ±ÊÖ±í
 	nodeCount=0;
 	leafCount=0;
 	hitCount=0;
@@ -2273,7 +2273,7 @@ struct ScreenChess{
 		if(type==0)return;
 		if(color==Red)setfillcolor(EGERGB(218,151,99));
 		else setfillcolor(EGERGB(218,156,77));
-		fillellipse(x,y,27,27);//ç”»åœ†
+		fillellipse(x,y,27,27);//»­Ô²
 		if(color==Red)setcolor(RED);
 		else setcolor(BLACK);
 		setfont(&chessFont);
@@ -2503,12 +2503,12 @@ struct ScreenPut{
 		}
 		return false;
 	}
-	void Revert(){//è¿˜åŸ
+	void Revert(){//»¹Ô­
 		assert(!boards.empty());
 		boards.push_back(boards[0]);
 		flip=boards.back().flip;
 	}
-	void Clean(){//æ¸…ç©º
+	void Clean(){//Çå¿Õ
 		ScreenChessBoard board=boards.back();
 		flip=board.flip=0;
 		for(int i=0;i<9;i++)for(int j=0;j<10;j++)board.chess[i][j].type=0;
@@ -2518,7 +2518,7 @@ struct ScreenPut{
 		board.chess[4][9].color=Red;
 		boards.push_back(board);
 	}
-	void Initialize(){//åˆå§‹
+	void Initialize(){//³õÊ¼
 		ScreenChessBoard board=boards.back();
 		flip=board.flip=0;
 		for(int i=0;i<9;i++)for(int j=0;j<10;j++)board.chess[i][j].type=0;
@@ -2546,14 +2546,14 @@ struct ScreenPut{
 		add(board,8,3,Black,Bing);
 		boards.push_back(board);
 	}
-	void Swap(){//äº¤æ¢
+	void Swap(){//½»»»
 		ScreenChessBoard board=boards.back();
 		flip=board.flip=!board.flip;
 		for(int i=0;i<9;i++)for(int j=0;j<10;j++)
 			if(board.chess[i][j].type)board.chess[i][j].color^=1;
 		boards.push_back(board);
 	}
-	void Flip(){//ç¿»è½¬
+	void Flip(){//·­×ª
 		ScreenChessBoard board=boards.back();
 		flip=board.flip=!board.flip;
 		for(int i=0;i<9;i++)for(int j=0;j<5;j++){
@@ -2561,7 +2561,7 @@ struct ScreenPut{
 		}
 		boards.push_back(board);
 	}
-	bool Rescind(){//æ’¤é”€
+	bool Rescind(){//³·Ïú
 		if(boards.size()>1){
 			boards.pop_back();
 			flip=boards.back().flip;
@@ -2666,7 +2666,7 @@ struct ScreenPutAdd{
 };
 ScreenPutAdd screenPutAdd;
 
-bool IsLeftClick(mouse_msg msg,int x1,int y1,int x2,int y2){//åˆ¤æ–­æ˜¯å¦å®Œæ•´å·¦å‡»
+bool IsLeftClick(mouse_msg msg,int x1,int y1,int x2,int y2){//ÅĞ¶ÏÊÇ·ñÍêÕû×ó»÷
 //	printf("%d %d %d %d\n",x1,y1,x2,y2);
 	int x=msg.x,y=msg.y;
 	if((int)msg.is_left()&&(int)msg.is_down()&&x>=x1&&x<x2&&y>=y1&&y<y2)while(is_run()){
@@ -2689,31 +2689,31 @@ void PaintPut(){
 	settextjustify(CENTER_TEXT,CENTER_TEXT);
 	setbkmode(TRANSPARENT);
 	for(int i=1;i<=8;i++)areaPutMenu[i].Bar();
-	areaPutMenu[1].PrintCenter("è¿˜åŸ");
-	areaPutMenu[2].PrintCenter("æ¸…ç©º");
-	areaPutMenu[3].PrintCenter("åˆå§‹");
-	areaPutMenu[4].PrintCenter("äº¤æ¢");
-	areaPutMenu[5].PrintCenter("æ’¤é”€");
-	areaPutMenu[6].PrintCenter("ç¿»è½¬");
-	areaPutMenu[7].PrintCenter("å®Œæˆ");
-	areaPutMenu[8].PrintCenter("è¿”å›");
+	areaPutMenu[1].PrintCenter("»¹Ô­");
+	areaPutMenu[2].PrintCenter("Çå¿Õ");
+	areaPutMenu[3].PrintCenter("³õÊ¼");
+	areaPutMenu[4].PrintCenter("½»»»");
+	areaPutMenu[5].PrintCenter("³·Ïú");
+	areaPutMenu[6].PrintCenter("·­×ª");
+	areaPutMenu[7].PrintCenter("Íê³É");
+	areaPutMenu[8].PrintCenter("·µ»Ø");
 	areaMenu2.Bar(MENU2_COLOR);
 //	setcolor(BLACK);
 	setfillcolor(MENU_COLOR);
 //	setfont(&standardFont);
 //	settextjustify(CENTER_TEXT,CENTER_TEXT);
 //	setbkmode(TRANSPARENT);
-	xyprintf(MENU2_X+45,MENU2_Y+30,"æ‘†æ”¾");
-	xyprintf(MENU2_X+95,MENU2_Y+21+1*60,"  å…ˆæ‰‹æ–¹ï¼š");
-	xyprintf(MENU2_X+95,MENU2_Y+21+2*60,"    çº¢æ–¹ï¼š");
-	xyprintf(MENU2_X+95,MENU2_Y+21+3*60,"    é»‘æ–¹ï¼š");
+	xyprintf(MENU2_X+45,MENU2_Y+30,"°Ú·Å");
+	xyprintf(MENU2_X+95,MENU2_Y+21+1*60,"  ÏÈÊÖ·½£º");
+	xyprintf(MENU2_X+95,MENU2_Y+21+2*60,"    ºì·½£º");
+	xyprintf(MENU2_X+95,MENU2_Y+21+3*60,"    ºÚ·½£º");
 	for(int i=1;i<=3;i++)areaPutMenu2[i].Bar();
-	if(screenPut.color==Red)areaPutMenu2[1].PrintCenter("çº¢æ–¹");
-	else areaPutMenu2[1].PrintCenter("é»‘æ–¹");
-	if(screenPut.roleRed==RolePlayer)areaPutMenu2[2].PrintCenter("æ£‹æ‰‹");
-	else areaPutMenu2[2].PrintCenter("ç”µè„‘");
-	if(screenPut.roleBlack==RolePlayer)areaPutMenu2[3].PrintCenter("æ£‹æ‰‹");
-	else areaPutMenu2[3].PrintCenter("ç”µè„‘");
+	if(screenPut.color==Red)areaPutMenu2[1].PrintCenter("ºì·½");
+	else areaPutMenu2[1].PrintCenter("ºÚ·½");
+	if(screenPut.roleRed==RolePlayer)areaPutMenu2[2].PrintCenter("ÆåÊÖ");
+	else areaPutMenu2[2].PrintCenter("µçÄÔ");
+	if(screenPut.roleBlack==RolePlayer)areaPutMenu2[3].PrintCenter("ÆåÊÖ");
+	else areaPutMenu2[3].PrintCenter("µçÄÔ");
 	screenPut.Render();
 }
 void OperationPut(int newGame=0){
@@ -2732,45 +2732,45 @@ void OperationPut(int newGame=0){
 		else if(msg.is_left()&&msg.is_down()&&!up){
 			up=1;
 			if(0);
-			else if(areaPutMenu[1].InArea(msg)){//è¿˜åŸ
+			else if(areaPutMenu[1].InArea(msg)){//»¹Ô­
 				screenPut.Revert();
 				screenPut.Render();
 				chooseIdx=chooseIdy=-1;
 			}
-			else if(areaPutMenu[2].InArea(msg)){//æ¸…ç©º
+			else if(areaPutMenu[2].InArea(msg)){//Çå¿Õ
 				screenPut.Clean();
 				screenPut.Render();
 				chooseIdx=chooseIdy=-1;
 			}
-			else if(areaPutMenu[3].InArea(msg)){//åˆå§‹
+			else if(areaPutMenu[3].InArea(msg)){//³õÊ¼
 				screenPut.Initialize();
 				screenPut.Render();
 				chooseIdx=chooseIdy=-1;
 			}
-			else if(areaPutMenu[4].InArea(msg)){//äº¤æ¢
+			else if(areaPutMenu[4].InArea(msg)){//½»»»
 				screenPut.Swap();
 				screenPut.Render();
 				chooseIdx=chooseIdy=-1;
 			}
-			else if(areaPutMenu[5].InArea(msg)){//æ’¤é”€
+			else if(areaPutMenu[5].InArea(msg)){//³·Ïú
 				screenPut.Rescind();
 				screenPut.Render();
 				chooseIdx=chooseIdy=-1;
 			}
-			else if(areaPutMenu[6].InArea(msg)){//ç¿»è½¬
+			else if(areaPutMenu[6].InArea(msg)){//·­×ª
 				screenPut.Flip();
 				screenPut.Render();
 				chooseIdx=chooseIdy=-1;
 			}
-			else if(areaPutMenu[7].InArea(msg)){//å®Œæˆ
+			else if(areaPutMenu[7].InArea(msg)){//Íê³É
 				screenPut.Complete(screenBoard);
-				//æ›´æ–°chessBoard
+				//¸üĞÂchessBoard
 				screenBoard.Print(chessBoardTemp);
 				ApiPlace(chessBoardTemp);
 				screenBoard.Scan(chessBoard);////
 				return;
 			}
-			else if(areaPutMenu[8].InArea(msg)){//è¿”å›
+			else if(areaPutMenu[8].InArea(msg)){//·µ»Ø
 				return;
 			}
 			else if(areaPutMenu2[1].InArea(msg)){
@@ -2780,12 +2780,12 @@ void OperationPut(int newGame=0){
 				if(screenPut.color==Red){
 					screenPut.color=Black;
 					areaPutMenu2[1].Bar(MENU_COLOR);
-					areaPutMenu2[1].PrintCenter("é»‘æ–¹",BLACK);
+					areaPutMenu2[1].PrintCenter("ºÚ·½",BLACK);
 				}
 				else if(screenPut.color==Black){
 					screenPut.color=Red;
 					areaPutMenu2[1].Bar(MENU_COLOR);
-					areaPutMenu2[1].PrintCenter("çº¢æ–¹",BLACK);
+					areaPutMenu2[1].PrintCenter("ºì·½",BLACK);
 				}
 			}
 			else if(areaPutMenu2[2].InArea(msg)){
@@ -2795,12 +2795,12 @@ void OperationPut(int newGame=0){
 				if(screenPut.roleRed==RolePlayer){
 					screenPut.roleRed=RoleComputer;
 					areaPutMenu2[2].Bar(MENU_COLOR);
-					areaPutMenu2[2].PrintCenter("ç”µè„‘",BLACK);
+					areaPutMenu2[2].PrintCenter("µçÄÔ",BLACK);
 				}
 				else if(screenPut.roleRed==RoleComputer){
 					screenPut.roleRed=RolePlayer;
 					areaPutMenu2[2].Bar(MENU_COLOR);
-					areaPutMenu2[2].PrintCenter("æ£‹æ‰‹",BLACK);
+					areaPutMenu2[2].PrintCenter("ÆåÊÖ",BLACK);
 				}
 			}
 			else if(areaPutMenu2[3].InArea(msg)){
@@ -2810,12 +2810,12 @@ void OperationPut(int newGame=0){
 				if(screenPut.roleBlack==RolePlayer){
 					screenPut.roleBlack=RoleComputer;
 					areaPutMenu2[3].Bar(MENU_COLOR);
-					areaPutMenu2[3].PrintCenter("ç”µè„‘",BLACK);
+					areaPutMenu2[3].PrintCenter("µçÄÔ",BLACK);
 				}
 				else if(screenPut.roleBlack==RoleComputer){
 					screenPut.roleBlack=RolePlayer;
 					areaPutMenu2[3].Bar(MENU_COLOR);
-					areaPutMenu2[3].PrintCenter("æ£‹æ‰‹",BLACK);
+					areaPutMenu2[3].PrintCenter("ÆåÊÖ",BLACK);
 				}
 			}
 			else if(areaBoard.InArea(msg)){
@@ -2844,14 +2844,14 @@ void OperationPut(int newGame=0){
 				else if(~chooseIdx&&~chooseIdy){
 					if(x==chooseIdx&&y==chooseIdy){
 						if(!screenPut.DeleteChess(x,y)){
-							puts("åˆ é™¤å¤±è´¥");
+							puts("É¾³ıÊ§°Ü");
 						}
 						screenPut.Render();
 						chooseIdx=chooseIdy=-1;
 					}
 					else{
 						if(!screenPut.MoveChess(chooseIdx,chooseIdy,x,y)){
-							puts("ç§»åŠ¨å¤±è´¥");
+							puts("ÒÆ¶¯Ê§°Ü");
 						}
 						screenPut.Render();
 						chooseIdx=chooseIdy=-1;
@@ -2910,11 +2910,11 @@ void PaintMain(){
 	settextjustify(CENTER_TEXT,CENTER_TEXT);
 	setbkmode(TRANSPARENT);
 	for(int i=1;i<=5;i++)areaMenu[i].Bar();
-	areaMenu[1].PrintCenter("æ–°å±€");
-	areaMenu[2].PrintCenter("è®¾ç½®");
-	areaMenu[3].PrintCenter("æ‚”æ£‹");
-	areaMenu[4].PrintCenter("æ‘†æ”¾");
-	areaMenu[5].PrintCenter("æç¤º");
+	areaMenu[1].PrintCenter("ĞÂ¾Ö");
+	areaMenu[2].PrintCenter("ÉèÖÃ");
+	areaMenu[3].PrintCenter("»ÚÆå");
+	areaMenu[4].PrintCenter("°Ú·Å");
+	areaMenu[5].PrintCenter("ÌáÊ¾");
 }
 void OperationMain(int mode=ModePlayerComputer){
 	ApiNewGame(mode,screenBoard.computerLevel,screenBoard.computerStep);
@@ -2965,7 +2965,7 @@ void OperationMain(int mode=ModePlayerComputer){
 		else if(up&&(int)msg.is_left()&&(int)msg.is_down()){
 			up=0;
 			if(0);
-			else if(areaMenu[1].InArea(msg)){//æ–°å±€
+			else if(areaMenu[1].InArea(msg)){//ĞÂ¾Ö
 				if(menuOpen==1){
 					menuOpen=0;
 					areaMenu2.Bar(BK_COLOR);
@@ -2984,22 +2984,22 @@ void OperationMain(int mode=ModePlayerComputer){
 					setfont(&standardFont);
 					settextjustify(CENTER_TEXT,CENTER_TEXT);
 					setbkmode(TRANSPARENT);
-					xyprintf(MENU2_X+45,MENU2_Y+30,"æ–°å±€");
-					xyprintf(MENU2_X+95,MENU2_Y+21+1*60,"    çº¢æ–¹ï¼š");
-					xyprintf(MENU2_X+95,MENU2_Y+21+2*60,"    é»‘æ–¹ï¼š");
-					xyprintf(MENU2_X+95,MENU2_Y+21+3*60,"ç”µè„‘æ°´å¹³ï¼š");
+					xyprintf(MENU2_X+45,MENU2_Y+30,"ĞÂ¾Ö");
+					xyprintf(MENU2_X+95,MENU2_Y+21+1*60,"    ºì·½£º");
+					xyprintf(MENU2_X+95,MENU2_Y+21+2*60,"    ºÚ·½£º");
+					xyprintf(MENU2_X+95,MENU2_Y+21+3*60,"µçÄÔË®Æ½£º");
 					for(int i=1;i<=6;i++)areaNewGame[i].Bar();
-					if(roleRedSet==RolePlayer)areaNewGame[1].PrintCenter("æ£‹æ‰‹");
-					else areaNewGame[1].PrintCenter("ç”µè„‘");
-					if(roleBlackSet==RolePlayer)areaNewGame[2].PrintCenter("æ£‹æ‰‹");
-					else areaNewGame[2].PrintCenter("ç”µè„‘");
-					areaNewGame[3].PrintCenter(to_string(computerLevelSet)+"æ­¥("+to_string(computerStepSet)+")");
-					areaNewGame[4].PrintCenter("ç¡®å®š");
-					areaNewGame[5].PrintCenter("ä¸€é”®å…ˆæ‰‹");
-					areaNewGame[6].PrintCenter("ä¸€é”®åæ‰‹");
+					if(roleRedSet==RolePlayer)areaNewGame[1].PrintCenter("ÆåÊÖ");
+					else areaNewGame[1].PrintCenter("µçÄÔ");
+					if(roleBlackSet==RolePlayer)areaNewGame[2].PrintCenter("ÆåÊÖ");
+					else areaNewGame[2].PrintCenter("µçÄÔ");
+					areaNewGame[3].PrintCenter(to_string(computerLevelSet)+"²½("+to_string(computerStepSet)+")");
+					areaNewGame[4].PrintCenter("È·¶¨");
+					areaNewGame[5].PrintCenter("Ò»¼üÏÈÊÖ");
+					areaNewGame[6].PrintCenter("Ò»¼üºóÊÖ");
 				}
 			}
-			else if(areaMenu[2].InArea(msg)){//è®¾ç½®
+			else if(areaMenu[2].InArea(msg)){//ÉèÖÃ
 				if(menuOpen==2){
 					menuOpen=0;
 					areaMenu2.Bar(BK_COLOR);
@@ -3018,35 +3018,35 @@ void OperationMain(int mode=ModePlayerComputer){
 					setfont(&standardFont);
 					settextjustify(CENTER_TEXT,CENTER_TEXT);
 					setbkmode(TRANSPARENT);
-					xyprintf(MENU2_X+45,MENU2_Y+30,"è®¾ç½®");
-					xyprintf(MENU2_X+95,MENU2_Y+21+1*60,"    çº¢æ–¹ï¼š");
-					xyprintf(MENU2_X+95,MENU2_Y+21+2*60,"    é»‘æ–¹ï¼š");
-					xyprintf(MENU2_X+95,MENU2_Y+21+3*60,"ç”µè„‘æ°´å¹³ï¼š");
-					xyprintf(MENU2_X+95,MENU2_Y+21+4*60,"æç¤ºæ°´å¹³ï¼š");
+					xyprintf(MENU2_X+45,MENU2_Y+30,"ÉèÖÃ");
+					xyprintf(MENU2_X+95,MENU2_Y+21+1*60,"    ºì·½£º");
+					xyprintf(MENU2_X+95,MENU2_Y+21+2*60,"    ºÚ·½£º");
+					xyprintf(MENU2_X+95,MENU2_Y+21+3*60,"µçÄÔË®Æ½£º");
+					xyprintf(MENU2_X+95,MENU2_Y+21+4*60,"ÌáÊ¾Ë®Æ½£º");
 					for(int i=1;i<=5;i++)areaSet[i].Bar();
-					if(roleRedSet==RolePlayer)areaSet[1].PrintCenter("æ£‹æ‰‹");
-					else areaSet[1].PrintCenter("ç”µè„‘");
-					if(roleBlackSet==RolePlayer)areaSet[2].PrintCenter("æ£‹æ‰‹");
-					else areaSet[2].PrintCenter("ç”µè„‘");
-					areaSet[3].PrintCenter(to_string(computerLevelSet)+"æ­¥("+to_string(computerStepSet)+")");
-					areaSet[4].PrintCenter(to_string(hintLevelSet)+"æ­¥("+to_string(hintStepSet)+")");
-					areaSet[5].PrintCenter("ç¡®å®š");
+					if(roleRedSet==RolePlayer)areaSet[1].PrintCenter("ÆåÊÖ");
+					else areaSet[1].PrintCenter("µçÄÔ");
+					if(roleBlackSet==RolePlayer)areaSet[2].PrintCenter("ÆåÊÖ");
+					else areaSet[2].PrintCenter("µçÄÔ");
+					areaSet[3].PrintCenter(to_string(computerLevelSet)+"²½("+to_string(computerStepSet)+")");
+					areaSet[4].PrintCenter(to_string(hintLevelSet)+"²½("+to_string(hintStepSet)+")");
+					areaSet[5].PrintCenter("È·¶¨");
 				}
 			}
-			else if(areaMenu[3].InArea(msg)){//æ‚”æ£‹
+			else if(areaMenu[3].InArea(msg)){//»ÚÆå
 				ApiRepent();
 				chooseIdx=chooseIdy=-1;
 				loser=-1;
 				screenBoard.Scan(chessBoard);
 				screenBoard.Render();
 			}
-			else if(areaMenu[4].InArea(msg)){//æ‘†æ”¾
+			else if(areaMenu[4].InArea(msg)){//°Ú·Å
 				menuOpen=4;
 				leave=1;
 				OperationPut();
 				PaintMain();
 			}
-			else if(areaMenu[5].InArea(msg)){//æç¤º
+			else if(areaMenu[5].InArea(msg)){//ÌáÊ¾
 				if(loser==-1){
 					think=1;
 					chooseIdx=chooseIdy=-1;
@@ -3058,7 +3058,7 @@ void OperationMain(int mode=ModePlayerComputer){
 			}
 			else if(areaMenu2.InArea(msg)){
 				if(0);
-				else if(menuOpen==1){//æ–°å±€å±•å¼€
+				else if(menuOpen==1){//ĞÂ¾ÖÕ¹¿ª
 					if(areaNewGame[1].InArea(msg)){
 						setfont(&standardFont);
 						settextjustify(CENTER_TEXT,CENTER_TEXT);
@@ -3066,12 +3066,12 @@ void OperationMain(int mode=ModePlayerComputer){
 						if(roleRedSet==RolePlayer){
 							roleRedSet=RoleComputer;
 							areaNewGame[1].Bar(MENU_COLOR);
-							areaNewGame[1].PrintCenter("ç”µè„‘",BLACK);
+							areaNewGame[1].PrintCenter("µçÄÔ",BLACK);
 						}
 						else if(roleRedSet==RoleComputer){
 							roleRedSet=RolePlayer;
 							areaNewGame[1].Bar(MENU_COLOR);
-							areaNewGame[1].PrintCenter("æ£‹æ‰‹",BLACK);
+							areaNewGame[1].PrintCenter("ÆåÊÖ",BLACK);
 						}
 					}
 					else if(areaNewGame[2].InArea(msg)){
@@ -3081,12 +3081,12 @@ void OperationMain(int mode=ModePlayerComputer){
 						if(roleBlackSet==RolePlayer){
 							roleBlackSet=RoleComputer;
 							areaNewGame[2].Bar(MENU_COLOR);
-							areaNewGame[2].PrintCenter("ç”µè„‘",BLACK);
+							areaNewGame[2].PrintCenter("µçÄÔ",BLACK);
 						}
 						else if(roleBlackSet==RoleComputer){
 							roleBlackSet=RolePlayer;
 							areaNewGame[2].Bar(MENU_COLOR);
-							areaNewGame[2].PrintCenter("æ£‹æ‰‹",BLACK);
+							areaNewGame[2].PrintCenter("ÆåÊÖ",BLACK);
 						}
 					}
 					else if(areaNewGame[3].InArea(msg)){
@@ -3095,10 +3095,10 @@ void OperationMain(int mode=ModePlayerComputer){
 						settextjustify(CENTER_TEXT,CENTER_TEXT);
 						setbkmode(TRANSPARENT);
 						areaNewGame[3].Bar(MENU_COLOR);
-						string str=to_string(computerLevelSet)+"æ­¥("+to_string(computerStepSet)+")";
+						string str=to_string(computerLevelSet)+"²½("+to_string(computerStepSet)+")";
 						areaNewGame[3].PrintCenter(str,BLACK);
 					}
-					else if(areaNewGame[4].InArea(msg)){//æ–°å±€ç¡®å®š
+					else if(areaNewGame[4].InArea(msg)){//ĞÂ¾ÖÈ·¶¨
 						menuOpen=0;
 						chooseIdx=chooseIdy=-1;
 						loser=-1;
@@ -3133,7 +3133,7 @@ void OperationMain(int mode=ModePlayerComputer){
 						screenBoard.Render();
 					}
 				}
-				else if(menuOpen==2){//è®¾ç½®å±•å¼€
+				else if(menuOpen==2){//ÉèÖÃÕ¹¿ª
 					if(areaSet[1].InArea(msg)){
 						setfont(&standardFont);
 						settextjustify(CENTER_TEXT,CENTER_TEXT);
@@ -3141,12 +3141,12 @@ void OperationMain(int mode=ModePlayerComputer){
 						if(roleRedSet==RolePlayer){
 							roleRedSet=RoleComputer;
 							areaSet[1].Bar(MENU_COLOR);
-							areaSet[1].PrintCenter("ç”µè„‘",BLACK);
+							areaSet[1].PrintCenter("µçÄÔ",BLACK);
 						}
 						else if(roleRedSet==RoleComputer){
 							roleRedSet=RolePlayer;
 							areaSet[1].Bar(MENU_COLOR);
-							areaSet[1].PrintCenter("æ£‹æ‰‹",BLACK);
+							areaSet[1].PrintCenter("ÆåÊÖ",BLACK);
 						}
 					}
 					else if(areaSet[2].InArea(msg)){
@@ -3156,12 +3156,12 @@ void OperationMain(int mode=ModePlayerComputer){
 						if(roleBlackSet==RolePlayer){
 							roleBlackSet=RoleComputer;
 							areaSet[2].Bar(MENU_COLOR);
-							areaSet[2].PrintCenter("ç”µè„‘",BLACK);
+							areaSet[2].PrintCenter("µçÄÔ",BLACK);
 						}
 						else if(roleBlackSet==RoleComputer){
 							roleBlackSet=RolePlayer;
 							areaSet[2].Bar(MENU_COLOR);
-							areaSet[2].PrintCenter("æ£‹æ‰‹",BLACK);
+							areaSet[2].PrintCenter("ÆåÊÖ",BLACK);
 						}
 					}
 					else if(areaSet[3].InArea(msg)){
@@ -3170,7 +3170,7 @@ void OperationMain(int mode=ModePlayerComputer){
 						settextjustify(CENTER_TEXT,CENTER_TEXT);
 						setbkmode(TRANSPARENT);
 						areaSet[3].Bar(MENU_COLOR);
-						string str=to_string(computerLevelSet)+"æ­¥("+to_string(computerStepSet)+")";
+						string str=to_string(computerLevelSet)+"²½("+to_string(computerStepSet)+")";
 						areaSet[3].PrintCenter(str,BLACK);
 					}
 					else if(areaSet[4].InArea(msg)){
@@ -3179,10 +3179,10 @@ void OperationMain(int mode=ModePlayerComputer){
 						settextjustify(CENTER_TEXT,CENTER_TEXT);
 						setbkmode(TRANSPARENT);
 						areaSet[4].Bar(MENU_COLOR);
-						string str=to_string(hintLevelSet)+"æ­¥("+to_string(hintStepSet)+")";
+						string str=to_string(hintLevelSet)+"²½("+to_string(hintStepSet)+")";
 						areaSet[4].PrintCenter(str,BLACK);
 					}
-					else if(areaSet[5].InArea(msg)){//è®¾ç½®ç¡®å®š
+					else if(areaSet[5].InArea(msg)){//ÉèÖÃÈ·¶¨
 						menuOpen=0;
 						chooseIdx=chooseIdy=-1;
 						areaMenu2.Bar(BK_COLOR);
@@ -3237,14 +3237,14 @@ void init(){
 	setbkcolor(BK_COLOR);
 	
 	standardFont.lfHeight=22;
-	strcpy(standardFont.lfFaceName,"å®‹ä½“");
+	strcpy(standardFont.lfFaceName,"ËÎÌå");
 	standardFont.lfWeight=FW_DONTCARE;
 	
 	chessFont.lfHeight=34;
-	strcpy(chessFont.lfFaceName,"å®‹ä½“");
+	strcpy(chessFont.lfFaceName,"ËÎÌå");
 	chessFont.lfWeight=FW_BLACK;
 	
-//	setfont(32,0,"å®‹ä½“");
+//	setfont(32,0,"ËÎÌå");
 	
 	screenBoard.basicScreenX=BOARD_X-GRID_LEN/2;
 	screenBoard.basicScreenY=BOARD_Y-GRID_LEN/2;

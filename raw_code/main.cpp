@@ -29,7 +29,7 @@ const int Ju=5;
 const int Pao=6;
 const int Bing=7;
 
-static char ChessName[2][8][5]={
+static char ChessName[2][8][10]={
 	{"  ","將","士","象","馬","車","炮","卒"},
 	{"  ","帥","仕","相","馬","車","炮","兵"}
 };
@@ -480,7 +480,7 @@ struct ChessBoard{
 			for(int j=3;j<=11;j++){
 				if(chess[HW(i,j)].type){
 					Ctrl::SetColor(chess[HW(i,j)].color==Red?Ctrl::RED:Ctrl::GREY);
-					static char str[8][5]={"  ","将","士","相","马","车","炮","兵"};
+					static char str[8][10]={"  ","将","士","相","马","车","炮","兵"};
 					printf("%s",str[chess[HW(i,j)].type]);
 					Ctrl::SetColor(Ctrl::GREY);
 				}
@@ -1918,8 +1918,8 @@ int AlphaBetaRoot(int alpha,int beta,int depth,deque<Move>&moveTrace,vector<Move
 		moveValue[move.begin][move.end]=-Infinite-i;
 	}
 	for(Move &move:moves){
-		Timer timer("depth "+to_string(depth));
-		if(depth<7)timer.Shutdown();
+		// Timer timer("depth "+to_string(depth));
+		// if(depth<7)timer.Shutdown();
 		board.ExecuteMove(move);
 		if(board.CheckKill(!board.color)){
 			board.RescindMove(move);

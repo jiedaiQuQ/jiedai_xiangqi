@@ -1918,8 +1918,8 @@ int AlphaBetaRoot(int alpha,int beta,int depth,deque<Move>&moveTrace,vector<Move
 		moveValue[move.begin][move.end]=-Infinite-i;
 	}
 	for(Move &move:moves){
-		Timer timer("depth "+to_string(depth));
-		if(depth<7)timer.Shutdown();
+		// Timer timer("depth "+to_string(depth));
+		// if(depth<7)timer.Shutdown();
 		board.ExecuteMove(move);
 		if(board.CheckKill(!board.color)){
 			board.RescindMove(move);

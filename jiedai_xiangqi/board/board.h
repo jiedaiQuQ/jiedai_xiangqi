@@ -306,6 +306,9 @@ struct LineupTable {
   //	int smallValue[3][3][3][3][3][6];
   int endGameDegree[100][100];
   int lineupValue[3][3][3][3][3][6][3][3][3][3][3][6];
+
+#define rep(x, id, len) for (x[id] = 0; x[id] <= len; x[id]++)
+
   void Init() {
     //		for(shi=0;shi<=2;shi++)
     //		for(xiang=0;xiang<=2;xiang++)
@@ -315,66 +318,55 @@ struct LineupTable {
     //		for(bing=0;bing<=5;bing++){
     //			smallValue[shi][xiang][ma][ju][pao][bing]=shi*2+xiang*2+ma*5+ju*10+pao*5+bing*1;
     //		}
-    for (int i = 0; i < 100; i++)
+    for (int i = 0; i < 100; i++) {
       for (int j = 0; j < 100; j++) {
         double degree1 = max(0, 30 - max(i, j)) / 30.0;
         double degree2 = max(0, 30 - min(i, j)) / 30.0;
         endGameDegree[i][j] = 0.8 * degree1 + 0.2 * degree2;
       }
+    }
     int shi[2], xiang[2], ma[2], ju[2], pao[2], bing[2];
-    for (shi[0] = 0; shi[0] <= 2; shi[0]++)
-      for (xiang[0] = 0; xiang[0] <= 2; xiang[0]++)
-        for (ma[0] = 0; ma[0] <= 2; ma[0]++)
-          for (ju[0] = 0; ju[0] <= 2; ju[0]++)
-            for (pao[0] = 0; pao[0] <= 2; pao[0]++)
-              for (bing[0] = 0; bing[0] <= 5; bing[0]++)
-                for (shi[1] = 0; shi[1] <= 2; shi[1]++)
-                  for (xiang[1] = 0; xiang[1] <= 2; xiang[1]++)
-                    for (ma[1] = 0; ma[1] <= 2; ma[1]++)
-                      for (ju[1] = 0; ju[1] <= 2; ju[1]++)
-                        for (pao[1] = 0; pao[1] <= 2; pao[1]++)
-                          for (bing[1] = 0; bing[1] <= 5; bing[1]++) {
-                            int value[2] = {0};
-                            int small[2] = {
-                                shi[0] * 2 + xiang[0] * 2 + ma[0] * 5 +
-                                    ju[0] * 10 + pao[0] * 5 + bing[0] * 1,
-                                shi[1] * 2 + xiang[1] * 2 + ma[1] * 5 +
-                                    ju[1] * 10 + pao[1] * 5 + bing[1] * 1};
-                            double degree = endGameDegree[small[0]][small[1]];
-                            bool isEndGame = (ma[0] + ju[0] + pao[0] <= 2 &&
-                                              ma[1] + ju[1] + pao[1] <= 2);
-                            for (int i = 0; i < 2; i++) {
-                              value[i] +=
-                                  150 * (shi[i] >= 1) + 200 * (shi[i] >= 2);
-                              value[i] +=
-                                  150 * (xiang[i] >= 1) + 225 * (xiang[i] >= 2);
-                              value[i] +=
-                                  425 * (ma[i] >= 1) + 425 * (ma[i] >= 2);
-                              value[i] +=
-                                  1000 * (ju[i] >= 1) + 1000 * (ju[i] >= 2);
-                              value[i] +=
-                                  475 * (pao[i] >= 1) + 475 * (pao[i] >= 2);
-                              double bingValue = 100 + 100 * degree;
-                              double bingK = (1 - degree) * 15;
-                              value[i] += int(
-                                  (bingValue + 1 * bingK) * (bing[i] >= 1) +
-                                  (bingValue + 0.5 * bingK) * (bing[i] >= 2) +
-                                  (bingValue) * (bing[i] >= 3) +
-                                  (bingValue - 1 * bingK) * (bing[i] >= 4) +
-                                  (bingValue - 2 * bingK) * (bing[i] >= 5));
-                              value[i] +=
-                                  max(0, (small[i] - small[!i] - 5) *
-                                             (30 - small[!i]));  // »»×Ó¼¤Àø
-                              if (ma[i] + ju[i] + pao[i] == 1) {
-                                if (ma[i] == 1) value[i] -= 100;
-                                if (ju[i] == 1) value[i] -= 300;
-                                if (pao[i] == 1) value[i] -= 150;
-                              }
-                            }
-                            lineupValue[shi[0]][xiang[0]][ma[0]][ju[0]][pao[0]]
-                                       [bing[0]][shi[1]][xiang[1]][ma[1]][ju[1]]
-                                       [pao[1]][bing[1]] = value[0] - value[1];
-                          }
+    rep(shi, 0, 2) rep(xiang, 0, 2) rep(ma, 0, 2) rep(ju, 0, 2) rep(pao, 0, 2)
+        rep(bing, 0, 5) rep(shi, 1, 2) rep(xiang, 1, 2) rep(ma, 1, 2)
+            rep(ju, 1, 2) rep(pao, 1, 2) rep(bing, 1, 5) {
+      int value[2] = {0};
+      int small[2] = {shi[0] * 2 + xiang[0] * 2 + ma[0] * 5 + ju[0] * 10 +
+                          pao[0] * 5 + bing[0] * 1,
+                      shi[1] * 2 + xiang[1] * 2 + ma[1] * 5 + ju[1] * 10 +
+                          pao[1] * 5 + bing[1] * 1};
+      double degree = endGameDegree[small[0]][small[1]];
+      bool isEndGame =
+          (ma[0] + ju[0] + pao[0] <= 2 && ma[1] + ju[1] + pao[1] <= 2);
+      for (int i = 0; i < 2; i++) {
+        value[i] += (150 - 50 * degree) * (shi[i] >= 1) +
+                    (200 - 50 * degree) * (shi[i] >= 2);
+        value[i] += (150 - 50 * degree) * (xiang[i] >= 1) +
+                    (225 - 50 * degree) * (xiang[i] >= 2);
+        value[i] += (425 + 50 * degree) * (ma[i] >= 1) +
+                    (425 + 50 * degree) * (ma[i] >= 2);
+        value[i] += (1200 + 200 * degree) * (ju[i] >= 1) +
+                    (1000 + 200 * degree) * (ju[i] >= 2);
+        value[i] += (475 - 100 * degree) * (pao[i] >= 1) +
+                    (475 - 100 * degree) * (pao[i] >= 2);
+        double bingValue = 100 + 100 * degree;
+        double bingK = (1 - degree) * 15;
+        value[i] += int((bingValue + 1 * bingK) * (bing[i] >= 1) +
+                        (bingValue + 1 * bingK) * (bing[i] >= 2) +
+                        (bingValue) * (bing[i] >= 3) +
+                        (bingValue - 1 * bingK) * (bing[i] >= 4) +
+                        (bingValue - 2 * bingK) * (bing[i] >= 5));
+        // value[i] +=
+        //     max(0, (small[i] - small[!i] - 5) * (30 - small[!i]));  // »»×Ó¼¤Àø
+        if (ma[i] + ju[i] + pao[i] == 1) {
+          if (ma[i] == 1) value[i] -= 100;
+          if (ju[i] == 1) value[i] -= 400;
+          if (pao[i] == 1) value[i] -= 150;
+        }
+      }
+      lineupValue[shi[0]][xiang[0]][ma[0]][ju[0]][pao[0]][bing[0]][shi[1]]
+                 [xiang[1]][ma[1]][ju[1]][pao[1]][bing[1]] =
+                     value[0] - value[1];
+    }
   }
 };
 

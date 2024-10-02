@@ -1,0 +1,2 @@
+add_executable(user_interface user_interface/user_interface.cpp)
+target_link_libraries(user_interface ege)

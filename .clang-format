@@ -1,6 +1,4 @@
----
 BasedOnStyle: Google
----
 Language:        Cpp
 Standard:        Cpp11
 DerivePointerAlignment: false
@@ -32,4 +30,3 @@ IncludeCategories:
   # The rest
   - Regex:       '.*'
     Priority:    5
----
